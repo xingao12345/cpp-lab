@@ -1,5 +1,16 @@
+# 构建产物
 build/
+compile_commands.json
+
+# 编辑器配置
 .vscode/
+
+# 目标文件
 *.o
 *.out
-compile_commands.json
+*.exe
+
+# lab 练习目录：只保留 .cpp 源码，忽略编译出的可执行文件
+lab/**/*
+!lab/**/
+!lab/**/*.cpp
