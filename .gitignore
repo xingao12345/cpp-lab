@@ -3,7 +3,6 @@ build/
 compile_commands.json
 
 # 编辑器配置
-.vscode/
 
 # 目标文件
 *.o

@@ -1,0 +1,36 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "调试当前文件",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${fileDirname}/${fileBasenameNoExtension}",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${fileDirname}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        { "description": "启用整齐打印", "text": "-enable-pretty-printing", "ignoreFailures": true }
+      ],
+      "preLaunchTask": "编译当前文件"
+    },
+    {
+      "name": "调试 cpp_lab（CMake 项目）",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/cpp_lab",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        { "description": "启用整齐打印", "text": "-enable-pretty-printing", "ignoreFailures": true }
+      ],
+      "preLaunchTask": "cmake build"
+    }
+  ]
+}
