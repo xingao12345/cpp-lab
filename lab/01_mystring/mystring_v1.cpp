@@ -15,14 +15,20 @@ public:
     }
 
     // ── 拷贝构造：深拷贝，保证两个对象各自持有独立内存 ──
-    MyString(const MyString &other)
-    {
-        size_ = other.size_;             // ① 复制长度
-        data_ = new char[size_ + 1];     // ② 申请【新的】内存
-        std::strcpy(data_, other.data_); // ③ 复制内容
+    // 拷贝构造：深拷贝；对方若为"被移动后的空对象"，也安全
+    MyString(const MyString& other) {
+        size_ = other.size_;
+        data_ = new char[size_ + 1];
+        std::strcpy(data_, other.data_ ? other.data_ : "");
         std::cout << "[copy-ctor] " << data_ << "\n";
     }
-
+    // 移动构造：直接接管对方的资源，O(1)
+    MyString(MyString&& other) noexcept:data_(other.data_),size_(other.size_)
+    {
+        other.data_=nullptr;
+        other.size_=0;
+        std::cout << "[move-ctor] " << (data_ ? data_ : "(null)") << "\n";
+    }
     // ── 交换：只交换指针和长度，不碰堆内存，因此不会抛异常 ──
     void swap(MyString &other) noexcept
     {
@@ -62,7 +68,7 @@ public:
         delete[] data_;
     }
 
-    const char *c_str() const { return data_; }
+    const char *c_str() const { return data_ ? data_ : ""; }
     std::size_t size() const { return size_; }
 
 private:
@@ -70,23 +76,22 @@ private:
     std::size_t size_ = 0;
 };
 
-int main()
-{
-    std::cout << "===== 测试 1：普通赋值 =====\n";
+int main() {
+    std::cout << "===== 测试 1：移动构造 =====\n";
     MyString a("hello");
-    MyString c("world");
-    c = a;
-    std::cout << "c = " << c.c_str() << "   (期望 hello)\n\n";
+    std::cout << "a = " << a.c_str() << ", size = " << a.size() << "\n";
 
-    std::cout << "===== 测试 2：自赋值 =====\n";
-    MyString b("world");
-    b = b;
-    std::cout << "b = " << b.c_str() << "   (期望 world)\n\n";
+    MyString b = std::move(a);
+    std::cout << "b = " << b.c_str() << ", size = " << b.size() << "\n";
+    std::cout << "a（被移动后）= \"" << a.c_str() << "\", size = " << a.size() << "\n\n";
 
-    std::cout << "===== 测试 3：链式赋值 =====\n";
-    MyString x("X"), y("Y"), z("Z");
-    x = y = z;
-    std::cout << "x = " << x.c_str() << ", y = " << y.c_str() << "   (期望 Z, Z)\n";
+    std::cout << "===== 测试 2：拷贝一个被移动后的对象 =====\n";
+    MyString c = a;                          // ← 之前这里会 strcpy(dst, nullptr)
+    std::cout << "c = \"" << c.c_str() << "\", size = " << c.size() << "\n\n";
+
+    std::cout << "===== 测试 3：普通拷贝 =====\n";
+    MyString d = b;
+    std::cout << "d = " << d.c_str() << ", size = " << d.size() << "\n";
 
     return 0;
 }
