@@ -51,7 +51,7 @@ public:
     // ───────────────────────────────────────────────────────────
     bool contains(int key) const {
         // TODO
-       Node* cur=root_;
+       const Node* cur=root_;
        while(cur){
         if(key<cur->key){
             cur=cur->left;
